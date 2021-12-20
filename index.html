@@ -105,68 +105,16 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start docker</span><br><span class="line">sudo systemctl enable docker</span><br></pre></td></tr></table></figure>
 <p>###6.验证安装是否成功(有client和service两部分表示docker安装启动都成功了)</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker version</span><br></pre></td></tr></table></figure>
-<p><img src="docker.png"></p>
-
+<img src="/2021/12/20/Centos7%E5%AE%89%E8%A3%85Docker/docker.png" class="" title="成功截图">
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/20/Centos7%E5%AE%89%E8%A3%85Docker/" data-id="ckxe97tr50000rwsohm4i6ile" data-title="Centos7安装Docker" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/12/20/Centos7%E5%AE%89%E8%A3%85Docker/" data-id="ckxe9crs40000y8so16u90cxj" data-title="Centos7安装Docker" class="article-share-link">Share</a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/" rel="tag">docker</a></li></ul>
 
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-test" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/12/20/test/" class="article-date">
-  <time class="dt-published" datetime="2021-12-20T05:40:49.000Z" itemprop="datePublished">2021-12-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/12/20/test/">test</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>###1.查看系统内核版本(&gt;3.10)</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname -r</span><br></pre></td></tr></table></figure>
-<p>###2.更新yum，安装相应的yum包</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo yum update</span><br><span class="line">sudo yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">卸载旧版本(如果之前安装过Docker)</span><br><span class="line">sudo yum remove docker docker-common docker-selinux docker-engine</span><br></pre></td></tr></table></figure>
-<p>###3.设置docker yum源</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
-<p>###4.安装</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">查看版本</span></span><br><span class="line">yum list docker-ce --showduplicates | sort -r</span><br><span class="line"><span class="meta">#</span><span class="bash">安装指定版本</span></span><br><span class="line">sudo yum install &lt;FQPN&gt; # 例如：sudo yum install docker-ce-17.12.0.ce</span><br></pre></td></tr></table></figure>
-<p>###5.启动并加入开机启动</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start docker</span><br><span class="line">sudo systemctl enable docker</span><br></pre></td></tr></table></figure>
-<p>###6.验证安装是否成功(有client和service两部分表示docker安装启动都成功了)</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker version</span><br></pre></td></tr></table></figure>
-<p><img src="docker.png"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/20/test/" data-id="ckxe97tra0001rwso0uzw87az" data-title="test" class="article-share-link">Share</a>
-      
-      
-      
     </footer>
   </div>
   
@@ -221,10 +169,6 @@
         
           <li>
             <a href="/2021/12/20/Centos7%E5%AE%89%E8%A3%85Docker/">Centos7安装Docker</a>
-          </li>
-        
-          <li>
-            <a href="/2021/12/20/test/">test</a>
           </li>
         
       </ul>
