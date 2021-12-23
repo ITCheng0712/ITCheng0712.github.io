@@ -134,17 +134,17 @@
 </tr>
 </tbody></table>
 <h2 id="3-Hadoop常见的版本有哪些？"><a href="#3-Hadoop常见的版本有哪些？" class="headerlink" title="3.Hadoop常见的版本有哪些？"></a>3.Hadoop常见的版本有哪些？</h2><p>CDH：有可用的开源免费包，但是本身不在开源、免费，易维护但扩展性差。<br>Apache：完全开源、免费，不易维护。<br>Hortonworks：有可用的HDP包，但是本身不在免费，易维护但扩展性差。</p>
-<h2 id="4-简单介绍Hadoop1-0，2-0，3-0的区别"><a href="#4-简单介绍Hadoop1-0，2-0，3-0的区别" class="headerlink" title="4.简单介绍Hadoop1.0，2.0，3.0的区别"></a>4.简单介绍Hadoop1.0，2.0，3.0的区别</h2><h3 id="Hadoop1-0："><a href="#Hadoop1-0：" class="headerlink" title="Hadoop1.0："></a>Hadoop1.0：</h3><ul>
+<h2 id="4-简单介绍Hadoop1-0，2-0，3-0的区别"><a href="#4-简单介绍Hadoop1-0，2-0，3-0的区别" class="headerlink" title="4.简单介绍Hadoop1.0，2.0，3.0的区别"></a>4.简单介绍Hadoop1.0，2.0，3.0的区别</h2><h5 id="Hadoop1-0："><a href="#Hadoop1-0：" class="headerlink" title="Hadoop1.0："></a>Hadoop1.0：</h5><ul>
 <li>由HDFS和MapReduce构成，HDFS由一个NameNode和多个DataNode组成，MapReduce由一个JobTracker和多个TaskTracker组成。Hadoop1.0易发生单点故障，拓展性差，性能低。</li>
 </ul>
-<h3 id="Hadoop2-0，为克服1-0中不足，提出了："><a href="#Hadoop2-0，为克服1-0中不足，提出了：" class="headerlink" title="Hadoop2.0，为克服1.0中不足，提出了："></a>Hadoop2.0，为克服1.0中不足，提出了：</h3><ul>
+<h5 id="Hadoop2-0，为克服1-0中不足，提出了："><a href="#Hadoop2-0，为克服1-0中不足，提出了：" class="headerlink" title="Hadoop2.0，为克服1.0中不足，提出了："></a>Hadoop2.0，为克服1.0中不足，提出了：</h5><ul>
 <li>Yarn，彻底代替了1.0中的JobTracker，在MRv1 中的 JobTracker 资源管理和作业跟踪的功能被抽象为 ResourceManager 和 AppMaster 两个组件。Yarn 还支持多种应用程序和框架，提供统一的资源调度和管理功能。</li>
 <li>NameNode故障得以解决，在Hadoop2.2.0之后提供了主备NameNode方案，并支持 NFS，QJM 和 Zookeeper 三种可选的共享存储系统。</li>
 <li>HDFS 快照，指 HDFS（或子系统）在某一时刻的只读镜像。(实战操作：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/JackQ/p/4586663.html">https://www.cnblogs.com/JackQ/p/4586663.html</a>)</li>
 <li>支持Windows 操作系统。</li>
 <li>Append，新版本的 Hadoop 引入了对文件的追加操作。</li>
 </ul>
-<h3 id="相比于Hadoop2-0，Hadoop3-0-是直接基于-JDK1-8-发布的一个新版本，同时，Hadoop3-0引入了一些重要的功能和特性："><a href="#相比于Hadoop2-0，Hadoop3-0-是直接基于-JDK1-8-发布的一个新版本，同时，Hadoop3-0引入了一些重要的功能和特性：" class="headerlink" title="相比于Hadoop2.0，Hadoop3.0 是直接基于 JDK1.8 发布的一个新版本，同时，Hadoop3.0引入了一些重要的功能和特性："></a>相比于Hadoop2.0，Hadoop3.0 是直接基于 JDK1.8 发布的一个新版本，同时，Hadoop3.0引入了一些重要的功能和特性：</h3><ul>
+<h5 id="相比于Hadoop2-0，Hadoop3-0-是直接基于-JDK1-8-发布的一个新版本，同时，Hadoop3-0引入了一些重要的功能和特性："><a href="#相比于Hadoop2-0，Hadoop3-0-是直接基于-JDK1-8-发布的一个新版本，同时，Hadoop3-0引入了一些重要的功能和特性：" class="headerlink" title="相比于Hadoop2.0，Hadoop3.0 是直接基于 JDK1.8 发布的一个新版本，同时，Hadoop3.0引入了一些重要的功能和特性："></a>相比于Hadoop2.0，Hadoop3.0 是直接基于 JDK1.8 发布的一个新版本，同时，Hadoop3.0引入了一些重要的功能和特性：</h5><ul>
 <li>HDFS可擦除编码：这项技术使HDFS在不降低可靠性的前提下节省了很大一部分存储空间</li>
 <li>多NameNode支持：在Hadoop3.0中，新增了对多NameNode的支持。当然，处于Active状态的NameNode实例必须只有一个。也就是说，从Hadoop3.0开始，在同一个集群中，支持一个 ActiveNameNode 和 多个 StandbyNameNode 的部署方式。</li>
 <li>MR Native Task优化</li>
@@ -178,7 +178,7 @@
 
 <h2 id="8-介绍一下MapReduce的Shuffle过程，并给出Hadoop优化的方案"><a href="#8-介绍一下MapReduce的Shuffle过程，并给出Hadoop优化的方案" class="headerlink" title="8.介绍一下MapReduce的Shuffle过程，并给出Hadoop优化的方案"></a>8.介绍一下MapReduce的Shuffle过程，并给出Hadoop优化的方案</h2><img src="/2021/12/20/hadoop%E9%9D%A2%E8%AF%95%E9%A2%98/MapReduce%E8%AE%A1%E7%AE%97%E6%B5%81%E7%A8%8B.png" class="" title="MapReduce计算流程图">
 
-<h3 id="shuffle："><a href="#shuffle：" class="headerlink" title="shuffle："></a>shuffle：</h3><ul>
+<h5 id="shuffle："><a href="#shuffle：" class="headerlink" title="shuffle："></a>shuffle：</h5><ul>
 <li>Map方法之后Reduce方法之前这段处理过程叫「Shuffle」</li>
 <li>Map方法之后，数据首先进入到分区方法，把数据标记好分区，然后把数据发送到环形缓冲区；环形缓冲区默认大小100m，环形缓冲区达到80%时，进行溢写；溢写前对数据进行排序，排序按照对key的索引进行字典顺序排序，排序的手段「快排」；溢写产生大量溢写文件，需要对溢写文件进行「归并排序」；对溢写的文件也可以进行Combiner操作，前提是汇总操作，求平均值不行。最后将文件按照分区存储到磁盘，等待Reduce端拉取。</li>
 <li>每个Reduce拉取Map端对应分区的数据。拉取数据后先存储到内存中，内存不够了，再存储到磁盘。拉取完所有数据后，采用归并排序将内存和磁盘中的数据都进行排序。在进入Reduce方法前，可以对数据进行分组操作。</li>
@@ -218,9 +218,9 @@
 </ul>
 <h5 id="7-压缩"><a href="#7-压缩" class="headerlink" title="7.压缩"></a>7.压缩</h5><img src="/2021/12/20/hadoop%E9%9D%A2%E8%AF%95%E9%A2%98/%E5%8E%8B%E7%BC%A9.png" class="">
 <p>如果面试过程问起，我们一般回答压缩方式为Snappy，特点速度快，缺点无法切分（可以回答在链式MR中，Reduce端输出使用bzip2压缩，以便后续的map任务对数据进行split）</p>
-<h2 id="9-介绍一下-Yarn-的-Job-提交流程"><a href="#9-介绍一下-Yarn-的-Job-提交流程" class="headerlink" title="9.介绍一下 Yarn 的 Job 提交流程"></a>9.介绍一下 Yarn 的 Job 提交流程</h2><h3 id="详细流程："><a href="#详细流程：" class="headerlink" title="详细流程："></a>详细流程：</h3><img src="/2021/12/20/hadoop%E9%9D%A2%E8%AF%95%E9%A2%98/Yarn%E4%BB%BB%E5%8A%A1%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B(%E8%AF%A6%E7%BB%86).png" class="">
+<h2 id="9-介绍一下-Yarn-的-Job-提交流程"><a href="#9-介绍一下-Yarn-的-Job-提交流程" class="headerlink" title="9.介绍一下 Yarn 的 Job 提交流程"></a>9.介绍一下 Yarn 的 Job 提交流程</h2><h5 id="详细流程："><a href="#详细流程：" class="headerlink" title="详细流程："></a>详细流程：</h5><img src="/2021/12/20/hadoop%E9%9D%A2%E8%AF%95%E9%A2%98/Yarn%E4%BB%BB%E5%8A%A1%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B(%E8%AF%A6%E7%BB%86).png" class="">
 
-<h3 id="简略流程："><a href="#简略流程：" class="headerlink" title="简略流程："></a>简略流程：</h3><img src="/2021/12/20/hadoop%E9%9D%A2%E8%AF%95%E9%A2%98/Yarn%E4%BB%BB%E5%8A%A1%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B(%E7%AE%80%E7%95%A5).png" class="">
+<h5 id="简略流程："><a href="#简略流程：" class="headerlink" title="简略流程："></a>简略流程：</h5><img src="/2021/12/20/hadoop%E9%9D%A2%E8%AF%95%E9%A2%98/Yarn%E4%BB%BB%E5%8A%A1%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B(%E7%AE%80%E7%95%A5).png" class="">
 
 <ul>
 <li>1.client向RM提交应用程序，其中包括启动该应用的ApplicationMaster的必须信息，例如ApplicationMaster程序、启动ApplicationMaster的命令、用户程序等</li>
@@ -232,7 +232,7 @@
 <li>7.container运行期间，ApplicationMaster对container进行监控。container通过RPC协议向对应的AM汇报自己的进度和状态等信息</li>
 <li>8.应用运行结束后，ApplicationMaster向ResourceManager注销自己，并允许属于它的container被收回</li>
 </ul>
-<h2 id="10-介绍下Yarn默认的调度器，调度器分类，以及它们之间的区别"><a href="#10-介绍下Yarn默认的调度器，调度器分类，以及它们之间的区别" class="headerlink" title="10.介绍下Yarn默认的调度器，调度器分类，以及它们之间的区别"></a>10.介绍下Yarn默认的调度器，调度器分类，以及它们之间的区别</h2><h3 id="Hadoop调度器主要分为三类："><a href="#Hadoop调度器主要分为三类：" class="headerlink" title="Hadoop调度器主要分为三类："></a>Hadoop调度器主要分为三类：</h3><ul>
+<h2 id="10-介绍下Yarn默认的调度器，调度器分类，以及它们之间的区别"><a href="#10-介绍下Yarn默认的调度器，调度器分类，以及它们之间的区别" class="headerlink" title="10.介绍下Yarn默认的调度器，调度器分类，以及它们之间的区别"></a>10.介绍下Yarn默认的调度器，调度器分类，以及它们之间的区别</h2><h5 id="Hadoop调度器主要分为三类："><a href="#Hadoop调度器主要分为三类：" class="headerlink" title="Hadoop调度器主要分为三类："></a>Hadoop调度器主要分为三类：</h5><ul>
 <li>1.FIFO Scheduler：先进先出调度器：优先提交的，优先执行，后面提交的等待【生产环境不会使用】</li>
 <li>2.Capacity Scheduler：容量调度器：允许看创建多个任务对列，多个任务对列可以同时执行。但是一个队列内部还是先进先出。【Hadoop2.7.2默认的调度器】</li>
 <li>Fair Scheduler：公平调度器：第一个程序在启动时可以占用其他队列的资源（100%占用），当其他队列有任务提交时，占用资源的队列需要将资源还给该任务。还资源的时候，效率比较慢。【CDH版本的yarn调度器默认】</li>
@@ -249,8 +249,8 @@
 <li>如果MR造成系统宕机。此时要控制Yarn同时运行的任务数，和每个任务申请的最大内存。调整参数：yarn.scheduler.maximum-allocation-mb（单个任务可申请的最多物理内存量，默认是8192MB）。</li>
 <li>如果写入文件过量造成NameNode宕机。那么调高Kafka的存储大小，控制从Kafka到HDFS的写入速度。高峰期的时候用Kafka进行缓存，高峰期过去数据同步会自动跟上。</li>
 </ul>
-<h2 id="14-你是如何解决Hadoop数据倾斜的问题的，能举个例子吗"><a href="#14-你是如何解决Hadoop数据倾斜的问题的，能举个例子吗" class="headerlink" title="14.你是如何解决Hadoop数据倾斜的问题的，能举个例子吗?"></a>14.你是如何解决Hadoop数据倾斜的问题的，能举个例子吗?</h2><h3 id="1）提前在map进行combine，减少传输的数据量"><a href="#1）提前在map进行combine，减少传输的数据量" class="headerlink" title="1）提前在map进行combine，减少传输的数据量"></a>1）提前在map进行combine，减少传输的数据量</h3><p>在Mapper加上combiner相当于提前进行reduce，即把一个Mapper中的相同key进行了聚合，减少shuffle过程中传输的数据量，以及Reducer端的计算量。<br>如果导致数据倾斜的key 大量分布在不同的mapper的时候，这种方法就不是很有效了。</p>
-<h3 id="2）数据倾斜的key-大量分布在不同的mapper"><a href="#2）数据倾斜的key-大量分布在不同的mapper" class="headerlink" title="2）数据倾斜的key 大量分布在不同的mapper"></a>2）数据倾斜的key 大量分布在不同的mapper</h3><ul>
+<h2 id="14-你是如何解决Hadoop数据倾斜的问题的，能举个例子吗"><a href="#14-你是如何解决Hadoop数据倾斜的问题的，能举个例子吗" class="headerlink" title="14.你是如何解决Hadoop数据倾斜的问题的，能举个例子吗?"></a>14.你是如何解决Hadoop数据倾斜的问题的，能举个例子吗?</h2><h5 id="1）提前在map进行combine，减少传输的数据量"><a href="#1）提前在map进行combine，减少传输的数据量" class="headerlink" title="1）提前在map进行combine，减少传输的数据量"></a>1）提前在map进行combine，减少传输的数据量</h5><p>在Mapper加上combiner相当于提前进行reduce，即把一个Mapper中的相同key进行了聚合，减少shuffle过程中传输的数据量，以及Reducer端的计算量。<br>如果导致数据倾斜的key 大量分布在不同的mapper的时候，这种方法就不是很有效了。</p>
+<h5 id="2）数据倾斜的key-大量分布在不同的mapper"><a href="#2）数据倾斜的key-大量分布在不同的mapper" class="headerlink" title="2）数据倾斜的key 大量分布在不同的mapper"></a>2）数据倾斜的key 大量分布在不同的mapper</h5><ul>
 <li><p>第一次在map阶段对那些导致了数据倾斜的key 加上1到n的随机前缀，这样本来相同的key 也会被分到多个Reducer 中进行局部聚合，数量就会大大降低。<br>第二次mapreduce，去掉key的随机前缀，进行全局聚合。<br>「思想」：二次mr，第一次将key随机散列到不同 reducer 进行处理达到负载均衡目的。第二次再根据去掉key的随机前缀，按原key进行reduce处理。<br>这个方法进行两次mapreduce，性能稍差</p>
 </li>
 <li><p>「增加Reducer，提升并行度」<br><code>JobConf.setNumReduceTasks(int)</code></p>
@@ -262,7 +262,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/20/hadoop%E9%9D%A2%E8%AF%95%E9%A2%98/" data-id="ckxibejq3000318so4zq9esyy" data-title="hadoop面试题" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/12/20/hadoop%E9%9D%A2%E8%AF%95%E9%A2%98/" data-id="ckxiblxj20003oosobbxsdx8t" data-title="hadoop面试题" class="article-share-link">Share</a>
       
       
       
@@ -315,7 +315,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/20/Java%E5%9F%BA%E7%A1%80%E7%BB%83%E4%B9%A0%E9%A2%98/" data-id="ckxibejq0000118sogx4g0wyc" data-title="Java基础练习题" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/12/20/Java%E5%9F%BA%E7%A1%80%E7%BB%83%E4%B9%A0%E9%A2%98/" data-id="ckxiblxiz0001ooso7z7ngjb7" data-title="Java基础练习题" class="article-share-link">Share</a>
       
       
       
@@ -351,23 +351,17 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>###1.查看系统内核版本(&gt;3.10)</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname -r</span><br></pre></td></tr></table></figure>
-<p>###2.更新yum，安装相应的yum包</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo yum update</span><br><span class="line">sudo yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">卸载旧版本(如果之前安装过Docker)</span><br><span class="line">sudo yum remove docker docker-common docker-selinux docker-engine</span><br></pre></td></tr></table></figure>
-<p>###3.设置docker yum源</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
-<p>###4.安装</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">查看版本</span></span><br><span class="line">yum list docker-ce --showduplicates | sort -r</span><br><span class="line"><span class="meta">#</span><span class="bash">安装指定版本</span></span><br><span class="line">sudo yum install &lt;FQPN&gt; # 例如：sudo yum install docker-ce-17.12.0.ce</span><br></pre></td></tr></table></figure>
-<p>###5.启动并加入开机启动</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start docker</span><br><span class="line">sudo systemctl enable docker</span><br></pre></td></tr></table></figure>
-<p>###6.验证安装是否成功(有client和service两部分表示docker安装启动都成功了)</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker version</span><br></pre></td></tr></table></figure>
+        <h3 id="1-查看系统内核版本-gt-3-10"><a href="#1-查看系统内核版本-gt-3-10" class="headerlink" title="1.查看系统内核版本(&gt;3.10)"></a>1.查看系统内核版本(&gt;3.10)</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname -r</span><br></pre></td></tr></table></figure>
+<h3 id="2-更新yum，安装相应的yum包"><a href="#2-更新yum，安装相应的yum包" class="headerlink" title="2.更新yum，安装相应的yum包"></a>2.更新yum，安装相应的yum包</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo yum update</span><br><span class="line">sudo yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">卸载旧版本(如果之前安装过Docker)</span><br><span class="line">sudo yum remove docker docker-common docker-selinux docker-engine</span><br></pre></td></tr></table></figure>
+<h3 id="3-设置docker-yum源"><a href="#3-设置docker-yum源" class="headerlink" title="3.设置docker yum源"></a>3.设置docker yum源</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+<h3 id="4-安装"><a href="#4-安装" class="headerlink" title="4.安装"></a>4.安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">查看版本</span></span><br><span class="line">yum list docker-ce --showduplicates | sort -r</span><br><span class="line"><span class="meta">#</span><span class="bash">安装指定版本</span></span><br><span class="line">sudo yum install &lt;FQPN&gt; # 例如：sudo yum install docker-ce-17.12.0.ce</span><br></pre></td></tr></table></figure>
+<h3 id="5-启动并加入开机启动"><a href="#5-启动并加入开机启动" class="headerlink" title="5.启动并加入开机启动"></a>5.启动并加入开机启动</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start docker</span><br><span class="line">sudo systemctl enable docker</span><br></pre></td></tr></table></figure>
+<h3 id="6-验证安装是否成功-有client和service两部分表示docker安装启动都成功了"><a href="#6-验证安装是否成功-有client和service两部分表示docker安装启动都成功了" class="headerlink" title="6.验证安装是否成功(有client和service两部分表示docker安装启动都成功了)"></a>6.验证安装是否成功(有client和service两部分表示docker安装启动都成功了)</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker version</span><br></pre></td></tr></table></figure>
 <img src="/2021/12/20/Centos7%E5%AE%89%E8%A3%85Docker/docker.png" class="" title="成功截图">
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/20/Centos7%E5%AE%89%E8%A3%85Docker/" data-id="ckxibejpv000018so5hbr8vpy" data-title="Centos7安装Docker" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/12/20/Centos7%E5%AE%89%E8%A3%85Docker/" data-id="ckxiblxiu0000ooso0dra5zgk" data-title="Centos7安装Docker" class="article-share-link">Share</a>
       
       
       
