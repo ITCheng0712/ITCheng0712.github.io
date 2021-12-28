@@ -71,6 +71,234 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-大数据面经（2021-11月）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/12/23/%E5%A4%A7%E6%95%B0%E6%8D%AE%E9%9D%A2%E7%BB%8F%EF%BC%882021-11%E6%9C%88%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2021-12-23T02:08:09.000Z" itemprop="datePublished">2021-12-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/12/23/%E5%A4%A7%E6%95%B0%E6%8D%AE%E9%9D%A2%E7%BB%8F%EF%BC%882021-11%E6%9C%88%EF%BC%89/">大数据面经（2021/11月）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="1、Hadoop"><a href="#1、Hadoop" class="headerlink" title="1、Hadoop"></a>1、Hadoop</h2><h5 id="1、yarn原理"><a href="#1、yarn原理" class="headerlink" title="1、yarn原理"></a>1、yarn原理</h5><ul>
+<li>yarn各个实例的概念<ul>
+<li>ResourceManager：<br>ResourceManager是master上的进程，负责整个分布式系统的资源管理和调度。他会处理来自client端的请求（包括提交作业/杀死作业）；启动/监控Application Master；监控NodeManager的情况，比如可能挂掉的NodeManager。</li>
+<li>NodeManager：<br>相对应的，NodeManager是处在slave节点上的进程，他只负责当前slave节点的资源管理和调度，以及task的运行。他会定期向ResourceManager回报资源/Container的情况（heartbeat）；接受来自ResourceManager对于Container的启停命令。</li>
+<li> Application Master：<br>每一个提交到集群的作业都会有一个与之对应的Application Master来负责应用程序的管理。他负责进行数据切分；为当前应用程序向ResourceManager去申请资源（也就是Container），并分配给具体的任务；与NodeManager通信，用来启停具体的任务，任务运行在Container中；而任务的监控和容错也是由Application Master来负责的。</li>
+<li>Container<br>那么container又是什么呢？它包含了Application Master向ResourceManager申请的计算资源，比如说CPU/内存的大小，以及任务运行所需的环境变量和队任务运行情况的描述。AM也是在container上运行的，不过AM的container是RM申请的。</li>
+</ul>
+</li>
+<li>Yarn 的 Job 提交流程<ul>
+<li>1.client向RM提交应用程序，其中包括启动该应用的ApplicationMaster的必须信息，例如ApplicationMaster程序、启动ApplicationMaster的命令、用户程序等</li>
+<li>2.ResourceManager启动一个container用于运行ApplicationMaster</li>
+<li>3.启动中的ApplicationMaster向ResourceManager注册自己，启动成功后与RM保持心跳</li>
+<li>4.ApplicationMaster向ResourceManager发送请求,申请相应数目的container</li>
+<li>5.申请成功的container，由ApplicationMaster进行初始化。container的启动信息初始化后，AM与对应的NodeManager通信，要求NM启动container</li>
+<li>6.NM启动container</li>
+<li>7.container运行期间，ApplicationMaster对container进行监控。container通过RPC协议向对应的AM汇报自己的进度和状态等信息</li>
+<li>8.应用运行结束后，ApplicationMaster向ResourceManager注销自己，并允许属于它的container被收回</li>
+</ul>
+</li>
+</ul>
+<img src="/2021/12/23/%E5%A4%A7%E6%95%B0%E6%8D%AE%E9%9D%A2%E7%BB%8F%EF%BC%882021-11%E6%9C%88%EF%BC%89/Yarn%E4%BB%BB%E5%8A%A1%E6%8F%90%E4%BA%A4%E6%B5%81%E7%A8%8B(%E8%AF%A6%E7%BB%86).png" class="">
+
+<h5 id="2、mr原理"><a href="#2、mr原理" class="headerlink" title="2、mr原理"></a>2、mr原理</h5><img src="/2021/12/23/%E5%A4%A7%E6%95%B0%E6%8D%AE%E9%9D%A2%E7%BB%8F%EF%BC%882021-11%E6%9C%88%EF%BC%89/MR%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86.png" class="">
+
+<img src="/2021/12/23/%E5%A4%A7%E6%95%B0%E6%8D%AE%E9%9D%A2%E7%BB%8F%EF%BC%882021-11%E6%9C%88%EF%BC%89/MapReduce%E8%AE%A1%E7%AE%97%E6%B5%81%E7%A8%8B.png" class="">
+
+<h6 id="shuffle"><a href="#shuffle" class="headerlink" title="shuffle:"></a>shuffle:</h6><ul>
+<li>Map方法之后Reduce方法之前这段处理过程叫「Shuffle」</li>
+<li>Map方法之后，数据首先进入到分区方法，把数据标记好分区，然后把数据发送到环形缓冲区；环形缓冲区默认大小100m，环形缓冲区达到80%时，进行溢写；溢写前对数据进行排序，排序按照对key的索引进行字典顺序排序，排序的手段「快排」；溢写产生大量溢写文件，需要对溢写文件进行「归并排序」；对溢写的文件也可以进行Combiner操作，前提是汇总操作，求平均值不行。最后将文件按照分区存储到磁盘，等待Reduce端拉取。</li>
+<li>每个Reduce拉取Map端对应分区的数据。拉取数据后先存储到内存中，内存不够了，再存储到磁盘。拉取完所有数据后，采用归并排序将内存和磁盘中的数据都进行排序。在进入Reduce方法前，可以对数据进行分组操作。</li>
+</ul>
+<h5 id="3、hdfs中切片与块的区别"><a href="#3、hdfs中切片与块的区别" class="headerlink" title="3、hdfs中切片与块的区别"></a>3、hdfs中切片与块的区别</h5><ul>
+<li>1.对比HDFS中数据的分块，块的大小默认为64M（或128M），同时产生了三个副本；<br>进行分片时先将块从分布式系统中取出，通过分片算法对块进行分片，片的单位就是块的大小（64M或128M）。</li>
+<li>2.block是在物理内存上进行存储的，真实存在于hdfs上的。而片（split）是虚拟内存上的储存，是逻辑上的“分片”，减少块的数量，便于后续读取。</li>
+<li>3.一个split只能属于一个文件，但是一个文件会被切成很多片。一个split可能包含多个block，但一个block不一定只属于一个split。</li>
+</ul>
+<h5 id="4、如何切片"><a href="#4、如何切片" class="headerlink" title="4、如何切片"></a>4、如何切片</h5><ul>
+<li>总览：Hadoop的MapTask并行度和数据切片有关系，数据切片就是把输入的文件在逻辑上进行切片，对文件切成多少份，Hadoop就会分配多少个MapTask任务进行并行执行该文件。<br>Block与Splite区别：Block是HDFS物理上把数据分成一块一块；数据切片只是在逻辑上对输入进行分片，并不会在磁盘上将其切分成片进行存储。比如一个512MB的文件在HDFS上存储，默认一个Block为128MB，那么需要4个block进行物理存储，但是如果对该文件进行切片，且每个分片100MB，那么会需要5个MapTask来执行任务。当然正常情况下不会这样做，一般逻辑切片的大小和HDFS的block大小是一致的。</li>
+<li>切片的不同机制：<ul>
+<li>TextInputFormat切片机制：<br>切片方式：TextInputFormat是默认的切片机制，按文件规划进行切分。比如切片默认为128M，如果一个文件为200M，则会形成两个切片，一个是128M，一个是72M，启动两个MapTask任务进行处理任务。但是如果一个文件只有1M，也会单独启动一个MapTask执行此任务，如果是10个这样的小文件，就会启动10个MapTask处理小文件任务。<br>读取方式：TextInputFormat是按行读取文件的每条记录，key代表读取的文件行在该文件中的起始字节偏移量，key为LongWritable类型；value为读取的行内容，不包括任何行终止符（换行符/回车符）, value为Text类型，相当于java中的String类型。</li>
+<li>CombineTextInputFormat切片机制：<br>处理小文件过多的场景<br>虚拟存储过程:<br>将输入目录下所有文件大小，依次和设置的setMaxInputSplitSize值比较，如果不大于设置的最大值，逻辑上划分一个块。如果输入文件大于设置的最大值且大于两倍，那么以最大值切割一块；当剩余数据大小超过设置的最大值且不大于最大值2倍，此时将文件均分成2个虚拟存储块（防止出现太小切片）。<br>例如setMaxInputSplitSize值为4M，输入文件大小为8.02M，则先逻辑上分成一个4M。剩余的大小为4.02M，如果按照4M逻辑划分，就会出现0.02M的小的虚拟存储文件，所以将剩余的4.02M文件切分成（2.01M和2.01M）两个文件。<br>切片过程:<br>判断虚拟存储的文件大小是否大于setMaxInputSplitSize值，大于等于则单独形成一个切片；<br>如果不大于则跟下一个虚拟存储文件进行合并，共同形成一个切片。<br>源码解析: <a target="_blank" rel="noopener" href="https://blog.csdn.net/u010010428/article/details/51469994">https://blog.csdn.net/u010010428/article/details/51469994</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="2、hive"><a href="#2、hive" class="headerlink" title="2、hive"></a>2、hive</h2><h5 id="1、udf函数创建、使用步骤，项目中写过udf吗，实现的功能是什么"><a href="#1、udf函数创建、使用步骤，项目中写过udf吗，实现的功能是什么" class="headerlink" title="1、udf函数创建、使用步骤，项目中写过udf吗，实现的功能是什么"></a>1、udf函数创建、使用步骤，项目中写过udf吗，实现的功能是什么</h5><ul>
+<li>创建步骤：<ul>
+<li>1.新建maven工程，导入需要使用的包。</li>
+<li>2.新建一个类继承UDF类并重写evaluate方法。</li>
+<li>3.打包编译生成jar包。</li>
+<li>4.注册UDF函数：<br>临时生效，即只在当前hive shell环境生效<br><code>hive&gt; add jar hive-1.0.jar; #加入jar包，注意jar包的路径，这里是当前路径</code><br>永久有效，可以在多hive shell回话窗口使用udf函数<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -put hive-1.0.jar hdfs://nameservice-ha/udf/ #上传jar版至HDFS，路径可以自定义</span><br><span class="line">hive&gt; CREATE FUNCTION addhello AS  &#x27;com.mycompany.bda.UdfHello&#x27; USING JAR &#x27;hdfs://nameservice-ha/udf/hive-1.0.jar&#x27;;</span><br></pre></td></tr></table></figure>
+针对华为MRS：<br>可以直接放到master节点的/opt/Bigdata/third_lib/Hive目录下。</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、什么时候或场景使用窗口函数"><a href="#2、什么时候或场景使用窗口函数" class="headerlink" title="2、什么时候或场景使用窗口函数"></a>2、什么时候或场景使用窗口函数</h5><table>
+<thead>
+<tr>
+<th align="left">函数</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Rank()</td>
+<td align="left">返回数据项在分组中的排名，排名相等会在名次中留下空位</td>
+</tr>
+<tr>
+<td align="left">DENSE_RANK()</td>
+<td align="left">返回数据项在分组中的排名，排名相等会在名次中不会留下空位</td>
+</tr>
+<tr>
+<td align="left">NTILE()</td>
+<td align="left">返回n分片后的值</td>
+</tr>
+<tr>
+<td align="left">ROW_NUMBER()</td>
+<td align="left">为每条记录返回一个数字</td>
+</tr>
+</tbody></table>
+<ul>
+<li>用于分区排序<ul>
+<li>ROW_NUMBER() OVER函数的基本用法<br>语法：ROW_NUMBER() OVER(PARTITION BY COLUMNORDER BY COLUMN)<br>详解：<br>row_number() OVER (PARTITION BY COL1 ORDERBY COL2)表示根据COL1分组，在分组内部根据COL2排序，而此函数计算的值就表示每组内部排序后的顺序编号（该编号在组内是连续并且唯一的)。</li>
+</ul>
+</li>
+<li>动态Group By<ul>
+<li>可以在distinct()函数进行去重执行速度慢时，代替distinct()进行去重操作。 </li>
+</ul>
+</li>
+<li>Top N<ul>
+<li>Rank()和ROW_NUMBER()等合用，具体看业务需求。</li>
+</ul>
+</li>
+<li>累计计算<ul>
+<li>sum() over()</li>
+</ul>
+</li>
+<li>层次查询<ul>
+<li>NTILE()</li>
+</ul>
+</li>
+</ul>
+<h5 id="3、说下hive是怎么调优的（数据倾斜、谓词下推、预聚合等）"><a href="#3、说下hive是怎么调优的（数据倾斜、谓词下推、预聚合等）" class="headerlink" title="3、说下hive是怎么调优的（数据倾斜、谓词下推、预聚合等）"></a>3、说下hive是怎么调优的（数据倾斜、谓词下推、预聚合等）</h5><ul>
+<li>数据倾斜调优：<ul>
+<li>1.针对goupby出现数据倾斜：加盐处理</li>
+<li>2.针对join出现的数据倾斜：<br>  抽样求出引起数据倾斜的key值，进行过滤处理。<br>  优先使用mapjoin。</li>
+<li>3.大小表join：使用mapjoin，将小表放在前面进行join操作。</li>
+<li>4.谓词下推</li>
+<li>5.预聚合<br>…….</li>
+</ul>
+</li>
+</ul>
+<h2 id="3、Hbase"><a href="#3、Hbase" class="headerlink" title="3、Hbase"></a>3、Hbase</h2><h5 id="1、HBASE架构"><a href="#1、HBASE架构" class="headerlink" title="1、HBASE架构"></a>1、HBASE架构</h5><img src="/2021/12/23/%E5%A4%A7%E6%95%B0%E6%8D%AE%E9%9D%A2%E7%BB%8F%EF%BC%882021-11%E6%9C%88%EF%BC%89/Hbase%E7%BB%84%E4%BB%B6%E4%BF%A1%E6%81%AF.png" class="" title="Hbase组件信息图">
+
+<img src="/2021/12/23/%E5%A4%A7%E6%95%B0%E6%8D%AE%E9%9D%A2%E7%BB%8F%EF%BC%882021-11%E6%9C%88%EF%BC%89/Hbase%E6%9E%B6%E6%9E%84%E5%9B%BE.png" class="" title="Hbase架构图">
+
+<ul>
+<li>Hbase读流程：<ul>
+<li>(1) Client访问Zookeeper，查找-ROOT-表，获取.META.表信息。</li>
+<li>(2) 从.META.表查找，获取存放目标数据的Region信息，从而找到对应的RegionServer。</li>
+<li>(3) 通过RegionServer获取需要查找的数据。</li>
+<li>(4) Regionserver的内存分为MemStore和BlockCache两部分，MemStore主要用于写数据，BlockCache主要用于读数据。读请求先到MemStore中查数据，查不到就到BlockCache中查，再查不到就会到StoreFile上读，并把读的结果放入BlockCache。</li>
+</ul>
+</li>
+<li>Hbase写流程：<ul>
+<li>(1) Client通过Zookeeper的调度，向RegionServer发出写数据请求，在Region中写数据。</li>
+<li>(2) 数据被写入Region的MemStore，直到MemStore达到预设阈值。</li>
+<li>(3) MemStore中的数据被Flush成一个StoreFile。</li>
+<li>(4) 随着StoreFile文件的不断增多，当其数量增长到一定阈值后，触发Compact合并操作，将多个StoreFile合并成一个StoreFile，同时进行版本合并和数据删除。</li>
+<li>(5) StoreFiles通过不断的Compact合并操作，逐步形成越来越大的StoreFile。</li>
+<li>(6) 单个StoreFile大小超过一定阈值后，触发Split操作，把当前Region Split成2个新的Region。父Region会下线，新Split出的2个子Region会被HMaster分配到相应的RegionServer上，使得原先1个Region的压力得以分流到2个Region上。</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、生产中Hbase你是如何调优的"><a href="#2、生产中Hbase你是如何调优的" class="headerlink" title="2、生产中Hbase你是如何调优的"></a>2、生产中Hbase你是如何调优的</h5><ul>
+<li>1.JVM调优：根据集群现状和Region总数调整HMaster的JVM内存大小。<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/wangshuminjava/article/details/80532784">https://blog.csdn.net/wangshuminjava/article/details/80532784</a></li>
+</ul>
+<h5 id="3、HBASE中建表语句中有个blocksize参数，这个值设置的多少（cdh平台默认64kb），这个值的大小对HBASE有什么影响"><a href="#3、HBASE中建表语句中有个blocksize参数，这个值设置的多少（cdh平台默认64kb），这个值的大小对HBASE有什么影响" class="headerlink" title="3、HBASE中建表语句中有个blocksize参数，这个值设置的多少（cdh平台默认64kb），这个值的大小对HBASE有什么影响"></a>3、HBASE中建表语句中有个blocksize参数，这个值设置的多少（cdh平台默认64kb），这个值的大小对HBASE有什么影响</h5><ul>
+<li>blocksize：设置HFile数据块大小(默认64kb),HFile会被切割成多个大小相等的block块儿(这里的block块儿和HDFS中的不是一个。)大的Block有利于顺序Scan，小号Block利于随机查询。正常情况下使用默认即可，有特殊业务需求是可以私有化定制。</li>
+</ul>
+<h5 id="4、你们HBASE集群有预分区吗，怎么设置的，为什么这么设置"><a href="#4、你们HBASE集群有预分区吗，怎么设置的，为什么这么设置" class="headerlink" title="4、你们HBASE集群有预分区吗，怎么设置的，为什么这么设置"></a>4、你们HBASE集群有预分区吗，怎么设置的，为什么这么设置</h5><ul>
+<li>1.shell createTable直接创建预分区。</li>
+<li>2.通过文件创建。</li>
+<li>3.javaAPI createTable并预分区。</li>
+</ul>
+<h5 id="5、有出现热点问题吗，怎么避免"><a href="#5、有出现热点问题吗，怎么避免" class="headerlink" title="5、有出现热点问题吗，怎么避免"></a>5、有出现热点问题吗，怎么避免</h5><ul>
+<li>1.预分区+合理的rowkey设计</li>
+<li>2.布隆过滤器，协处理器(了解不多，有兴趣可以到官网查的看一下)</li>
+</ul>
+<h2 id="4、spark"><a href="#4、spark" class="headerlink" title="4、spark"></a>4、spark</h2><h5 id="1、spark提交命令、参数"><a href="#1、spark提交命令、参数" class="headerlink" title="1、spark提交命令、参数"></a>1、spark提交命令、参数</h5><p>./bin/spark-submit –help</p>
+<p>./bin/spark-submit <br>  –class <main-class> <br>  –master <master-url> <br>  –deploy-mode <deploy-mode> <br>  –conf <key>=<value> <br>  … # other options<br>  <application-jar> \</p>
+<ul>
+<li>常用参数:<ul>
+<li>–queue:指定任务运行队列</li>
+<li>–executor-cores:指定任务CPU</li>
+<li>–executor-memory:指定任务运行内存</li>
+</ul>
+</li>
+</ul>
+<h2 id="5、flink"><a href="#5、flink" class="headerlink" title="5、flink"></a>5、flink</h2><h5 id="1、flink中watermark是什么"><a href="#1、flink中watermark是什么" class="headerlink" title="1、flink中watermark是什么"></a>1、flink中watermark是什么</h5><h5 id="2、简单说下checkpoint机制，你项目中checkpoint间隔设置的多少，为什么取这个间隔数"><a href="#2、简单说下checkpoint机制，你项目中checkpoint间隔设置的多少，为什么取这个间隔数" class="headerlink" title="2、简单说下checkpoint机制，你项目中checkpoint间隔设置的多少，为什么取这个间隔数"></a>2、简单说下checkpoint机制，你项目中checkpoint间隔设置的多少，为什么取这个间隔数</h5><ul>
+<li>1.简单来说checkpoint就是一个检查点，属于Flink的一个容错机制，可以在由于某些特殊情况导致Flink任务挂掉时，用来进行任务恢复。</li>
+<li>2.公司这边是120秒一个checkpoint，俩个checkpoint之间最小间隔60秒，checkpoint的过期时间是30分钟。</li>
+<li>3.尽量保证实时数据正确，但是由于数据俩份，即使看板中当天Flink任务有问题，也可通过离线数据补回。</li>
+</ul>
+<h5 id="3、项目中用到窗口函数了吗，简单的说下窗口函数"><a href="#3、项目中用到窗口函数了吗，简单的说下窗口函数" class="headerlink" title="3、项目中用到窗口函数了吗，简单的说下窗口函数"></a>3、项目中用到窗口函数了吗，简单的说下窗口函数</h5><h2 id="6、kafka"><a href="#6、kafka" class="headerlink" title="6、kafka"></a>6、kafka</h2><h5 id="1、kafka创建topic命令（kafka命令类的问题没必要刻意记命令，直接回怼说平时命令存在自己常用的记事本中，直接复制粘贴）"><a href="#1、kafka创建topic命令（kafka命令类的问题没必要刻意记命令，直接回怼说平时命令存在自己常用的记事本中，直接复制粘贴）" class="headerlink" title="1、kafka创建topic命令（kafka命令类的问题没必要刻意记命令，直接回怼说平时命令存在自己常用的记事本中，直接复制粘贴）"></a>1、kafka创建topic命令（kafka命令类的问题没必要刻意记命令，直接回怼说平时命令存在自己常用的记事本中，直接复制粘贴）</h5><ul>
+<li>1.bin/kafka-topic.sh –zookeeper host:2181 –create </li>
+</ul>
+<h5 id="2、kafka多少个节点，副本怎么设置的"><a href="#2、kafka多少个节点，副本怎么设置的" class="headerlink" title="2、kafka多少个节点，副本怎么设置的"></a>2、kafka多少个节点，副本怎么设置的</h5><ul>
+<li>2.3节点8核64G，正常topic8分区俩副本。有需求时，比如有直播活动导致业务量激增，有扩容至5节点，16个分区。压测时可以到8万qps每秒。</li>
+</ul>
+<h5 id="3、kafka消费慢遇到过吗，有没有什么排查和解决思路"><a href="#3、kafka消费慢遇到过吗，有没有什么排查和解决思路" class="headerlink" title="3、kafka消费慢遇到过吗，有没有什么排查和解决思路"></a>3、kafka消费慢遇到过吗，有没有什么排查和解决思路</h5><ul>
+<li>kafka消费慢、存在堆积的可能原因：<ul>
+<li>1.业务代码有更新，代码上线后导致的。</li>
+<li>2.重复消费问题。</li>
+</ul>
+</li>
+</ul>
+<h2 id="7、语言（Java、Python、Scala、C、go等）"><a href="#7、语言（Java、Python、Scala、C、go等）" class="headerlink" title="7、语言（Java、Python、Scala、C、go等）"></a>7、语言（Java、Python、Scala、C、go等）</h2><p>java：</p>
+<ul>
+<li>1.基础：<ul>
+<li>1.8大基本数据类型。(int,double,float,long,char,string,boolean,byte,short。String不算基本数据类型，但是常用。)</li>
+<li>2.修饰符：<ul>
+<li>访问控制修饰符：<br>public(常用)<br>protected<br>default<br>private(常用)</li>
+<li>非访问控制修饰符：<br>static、final、class、abstarct等。<br>还是看菜鸟教程吧：<a target="_blank" rel="noopener" href="https://www.runoob.com/java/java-operators.html">https://www.runoob.com/java/java-operators.html</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="8、shell"><a href="#8、shell" class="headerlink" title="8、shell"></a>8、shell</h2><p>菜鸟教程：<a target="_blank" rel="noopener" href="https://www.runoob.com/linux/linux-shell-process-control.html">https://www.runoob.com/linux/linux-shell-process-control.html</a></p>
+<h2 id="9、开放性问题及其他"><a href="#9、开放性问题及其他" class="headerlink" title="9、开放性问题及其他"></a>9、开放性问题及其他</h2><h5 id="1、简单的说下你最近的一个项目"><a href="#1、简单的说下你最近的一个项目" class="headerlink" title="1、简单的说下你最近的一个项目"></a>1、简单的说下你最近的一个项目</h5><h5 id="2、你对数据中台的理解（参考：为什么建数据中台、解决的问题是什么、和数仓或实时流分析的区别在哪）"><a href="#2、你对数据中台的理解（参考：为什么建数据中台、解决的问题是什么、和数仓或实时流分析的区别在哪）" class="headerlink" title="2、你对数据中台的理解（参考：为什么建数据中台、解决的问题是什么、和数仓或实时流分析的区别在哪）"></a>2、你对数据中台的理解（参考：为什么建数据中台、解决的问题是什么、和数仓或实时流分析的区别在哪）</h5><h5 id="3、某某行业（如保险行业）中使用的架构、存在的问题、痛点、如何解决"><a href="#3、某某行业（如保险行业）中使用的架构、存在的问题、痛点、如何解决" class="headerlink" title="3、某某行业（如保险行业）中使用的架构、存在的问题、痛点、如何解决"></a>3、某某行业（如保险行业）中使用的架构、存在的问题、痛点、如何解决</h5><h5 id="4、说下工作中遇到的问题（从问题现象、排查思路、解决过程，结果验证来答）"><a href="#4、说下工作中遇到的问题（从问题现象、排查思路、解决过程，结果验证来答）" class="headerlink" title="4、说下工作中遇到的问题（从问题现象、排查思路、解决过程，结果验证来答）"></a>4、说下工作中遇到的问题（从问题现象、排查思路、解决过程，结果验证来答）</h5><h5 id="5、大厂会问：哪个组件你比较熟悉，然后会根据你熟悉的组件往深了怼你"><a href="#5、大厂会问：哪个组件你比较熟悉，然后会根据你熟悉的组件往深了怼你" class="headerlink" title="5、大厂会问：哪个组件你比较熟悉，然后会根据你熟悉的组件往深了怼你"></a>5、大厂会问：哪个组件你比较熟悉，然后会根据你熟悉的组件往深了怼你</h5><h5 id="6、手撕常见算法（面大厂自有-BAT、京东、美团等-的都会问，外包可能不涉及）"><a href="#6、手撕常见算法（面大厂自有-BAT、京东、美团等-的都会问，外包可能不涉及）" class="headerlink" title="6、手撕常见算法（面大厂自有(BAT、京东、美团等)的都会问，外包可能不涉及）"></a>6、手撕常见算法（面大厂自有(BAT、京东、美团等)的都会问，外包可能不涉及）</h5><h5 id="7、项目是如何技术选型的"><a href="#7、项目是如何技术选型的" class="headerlink" title="7、项目是如何技术选型的"></a>7、项目是如何技术选型的</h5>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/12/23/%E5%A4%A7%E6%95%B0%E6%8D%AE%E9%9D%A2%E7%BB%8F%EF%BC%882021-11%E6%9C%88%EF%BC%89/" data-id="ckxprkvpz0004fksof4fw1arz" data-title="大数据面经（2021/11月）" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-hadoop面试题" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/12/20/hadoop%E9%9D%A2%E8%AF%95%E9%A2%98/" class="article-date">
@@ -262,7 +490,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/20/hadoop%E9%9D%A2%E8%AF%95%E9%A2%98/" data-id="ckxiblxj20003oosobbxsdx8t" data-title="hadoop面试题" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/12/20/hadoop%E9%9D%A2%E8%AF%95%E9%A2%98/" data-id="ckxprkvpv0001fksofrj03610" data-title="hadoop面试题" class="article-share-link">Share</a>
       
       
       
@@ -315,7 +543,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/20/Java%E5%9F%BA%E7%A1%80%E7%BB%83%E4%B9%A0%E9%A2%98/" data-id="ckxiblxiz0001ooso7z7ngjb7" data-title="Java基础练习题" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/12/20/Java%E5%9F%BA%E7%A1%80%E7%BB%83%E4%B9%A0%E9%A2%98/" data-id="ckxprkvpy0003fksoe6v89tuy" data-title="Java基础练习题" class="article-share-link">Share</a>
       
       
       
@@ -361,7 +589,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/20/Centos7%E5%AE%89%E8%A3%85Docker/" data-id="ckxiblxiu0000ooso0dra5zgk" data-title="Centos7安装Docker" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/12/20/Centos7%E5%AE%89%E8%A3%85Docker/" data-id="ckxprkvpr0000fkso2bm26hrz" data-title="Centos7安装Docker" class="article-share-link">Share</a>
       
       
       
@@ -398,7 +626,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/hadoop/" style="font-size: 10px;">hadoop</a> <a href="/tags/java/" style="font-size: 10px;">java</a> <a href="/tags/java%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95%E7%BB%83%E4%B9%A0/" style="font-size: 10px;">java基础语法练习</a> <a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/" style="font-size: 10px;">大数据</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a>
+      <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/hadoop/" style="font-size: 10px;">hadoop</a> <a href="/tags/java/" style="font-size: 10px;">java</a> <a href="/tags/java%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95%E7%BB%83%E4%B9%A0/" style="font-size: 10px;">java基础语法练习</a> <a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/" style="font-size: 10px;">大数据</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 20px;">面试</a>
     </div>
   </div>
 
@@ -418,6 +646,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2021/12/23/%E5%A4%A7%E6%95%B0%E6%8D%AE%E9%9D%A2%E7%BB%8F%EF%BC%882021-11%E6%9C%88%EF%BC%89/">大数据面经（2021/11月）</a>
+          </li>
         
           <li>
             <a href="/2021/12/20/hadoop%E9%9D%A2%E8%AF%95%E9%A2%98/">hadoop面试题</a>
